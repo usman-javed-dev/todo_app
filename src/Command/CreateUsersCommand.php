@@ -14,11 +14,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class CreateUsersCommand extends Command
 {
-    private $userSrv;
-    public function __construct(UserService $userSrv)
+    private $userService;
+    public function __construct(UserService $userService)
     {
         parent::__construct();
-        $this->userSrv = $userSrv;
+        $this->userService = $userService;
     }
 
     protected static $defaultName = 'app:create-users';
@@ -26,18 +26,18 @@ class CreateUsersCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('user_no', InputArgument::OPTIONAL, 'Number of the users to add', 1);
+        $this->addArgument('numOfUsers', InputArgument::OPTIONAL, 'Number of the users to add.', 1);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $user_no = $input->getArgument('user_no');
+        $numOfUsers = $input->getArgument('numOfUsers');
 
-        if (is_numeric($user_no)) {
-            $io->note("Creating {$user_no} users...");
+        if (is_numeric($numOfUsers)) {
+            $io->note("Creating {$numOfUsers} users...");
 
-            $this->userSrv->createBulk($user_no);
+            $this->userService->createBulk($numOfUsers);
 
             $io->success('Creation done...');
 

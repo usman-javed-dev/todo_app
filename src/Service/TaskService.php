@@ -15,13 +15,13 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class TaskService
 {
-  private $mediaSrv;
+  private $mediaService;
   private $taskRepo;
   private $formFactory;
 
-  function __construct(FormFactoryInterface $formFactory, MediaService $mediaSrv, TaskRepository $taskRepo)
+  function __construct(FormFactoryInterface $formFactory, MediaService $mediaService, TaskRepository $taskRepo)
   {
-    $this->mediaSrv = $mediaSrv;
+    $this->mediaService = $mediaService;
     $this->taskRepo = $taskRepo;
     $this->formFactory = $formFactory;
   }
@@ -31,44 +31,18 @@ class TaskService
     return $this->taskRepo->findAll();
   }
 
-  public function new(Request $request)
+  public function new($form, Task $task)
   {
-    $task = new Task();
-    $form = $this->formFactory->create(TaskType::class, $task);
+    $this->uploadAttachment($form, $task);
 
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
-      $this->uploadAttachment($form, $task);
-
-      $this->taskRepo->persist($task);
-
-      return [Enums::RESOURCE_SAVED, []];
-    }
-
-    return [Enums::SAVE_RESOURCE, [
-      'task' => $task,
-      'form' => $form,
-    ]];
+    $this->taskRepo->persist($task);
   }
 
-  public function edit(Request $request, Task $task)
+  public function edit($form, Task $task)
   {
-    $form = $this->formFactory->create(TaskType::class, $task);
-    $form->handleRequest($request);
+    $this->uploadAttachment($form, $task);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-      $this->uploadAttachment($form, $task);
-
-      $this->taskRepo->flush();
-
-      return [Enums::RESOURCE_SAVED, []];
-    }
-
-    return [Enums::SAVE_RESOURCE, [
-      'task' => $task,
-      'form' => $form,
-    ]];
+    $this->taskRepo->flush();
   }
 
   private function uploadAttachment($form, Task $task)
@@ -76,7 +50,7 @@ class TaskService
     /** @var UploadedFile $attachmentFile */
     $attachmentFile = $form->get('attachment')->getData();
     if ($attachmentFile) {
-      $attachmentFileName = $this->mediaSrv->upload($attachmentFile);
+      $attachmentFileName = $this->mediaService->upload($attachmentFile);
       $task->setAttachmentFileName($attachmentFileName);
     }
   }
@@ -84,7 +58,7 @@ class TaskService
   public function delete(Task $task)
   {
     // Remove file first
-    $this->mediaSrv->remove($task->getAttachmentFileName());
+    $this->mediaService->remove($task->getAttachmentFileName());
 
     $this->taskRepo->remove($task);
   }
@@ -92,7 +66,7 @@ class TaskService
   public function deleteAttachment(Task $task)
   {
     // Remove file first
-    $this->mediaSrv->remove($task->getAttachmentFileName());
+    $this->mediaService->remove($task->getAttachmentFileName());
 
     $task->setAttachmentFileName(null);
 

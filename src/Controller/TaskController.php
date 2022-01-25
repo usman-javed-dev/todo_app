@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Task;
 use App\Service\TaskService;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,13 +14,13 @@ use Symfony\Component\Routing\Annotation\Route;
  * 
  * @Route("/task")
  */
-class TaskController extends BaseController
+class TaskController extends AbstractController
 {
-    private $taskSrv;
+    private $taskService;
 
-    function __construct(TaskService $taskSrv)
+    function __construct(TaskService $taskService)
     {
-        $this->taskSrv = $taskSrv;
+        $this->taskService = $taskService;
     }
 
     /**
@@ -29,7 +29,7 @@ class TaskController extends BaseController
     public function index(): Response
     {
         return $this->render('task/index.html.twig', [
-            'tasks' => $this->taskSrv->findAll(),
+            'tasks' => $this->taskService->findAll(),
         ]);
     }
 
@@ -38,8 +38,21 @@ class TaskController extends BaseController
      */
     public function new(Request $request): Response
     {
-        $resp = $this->taskSrv->new($request);
-        return $this->handleSaveResource($resp, 'task_index', 'task/new.html.twig');
+        $task = new Task();
+        $form = $this->formFactory->create(TaskType::class, $task);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->taskService->new($form, $task);
+
+            return $this->redirectToRoute('task_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('task/new.html.twig', [
+            'task' => $task,
+            'form' => $form,
+        ]);
     }
 
     /**
@@ -57,8 +70,20 @@ class TaskController extends BaseController
      */
     public function edit(Request $request, Task $task): Response
     {
-        $resp = $this->taskSrv->edit($request, $task);
-        return $this->handleSaveResource($resp, 'task_index', 'task/edit.html.twig');
+        $form = $this->formFactory->create(TaskType::class, $task);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->taskService->edit($form, $task);
+
+            return $this->redirectToRoute('task_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('task/edit.html.twig', [
+            'task' => $task,
+            'form' => $form,
+        ]);
     }
 
     /**
@@ -67,7 +92,7 @@ class TaskController extends BaseController
     public function delete(Request $request, Task $task): Response
     {
         if ($this->isCsrfTokenValid('delete' . $task->getId(), $request->request->get('_token'))) {
-            $this->taskSrv->delete($task);
+            $this->taskService->delete($task);
         }
 
         return $this->redirectToRoute('task_index', [], Response::HTTP_SEE_OTHER);
@@ -79,7 +104,7 @@ class TaskController extends BaseController
     public function deleteAttachment(Request $request, Task $task): Response
     {
         if ($this->isCsrfTokenValid('delete-attachment' . $task->getId(), $request->request->get('_token'))) {
-            $this->taskSrv->deleteAttachment($task);
+            $this->taskService->deleteAttachment($task);
         }
 
         return $this->redirectToRoute('task_index', [], Response::HTTP_SEE_OTHER);

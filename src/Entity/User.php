@@ -12,15 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  * 
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
-class User
+class User extends AbstractEntity
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
     /**
      * @ORM\Column(type="string", length=50)
      */
@@ -39,11 +32,6 @@ class User
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
     }
 
     public function getName(): string

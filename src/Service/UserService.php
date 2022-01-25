@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Entity\User;
 use App\Repository\UserRepository;
 
 /**
@@ -11,12 +10,12 @@ use App\Repository\UserRepository;
 class UserService
 {
   private $userRepo;
-  private $utilSrv;
+  private $utilService;
 
-  function __construct(UserRepository $userRepo, UtilService $utilSrv)
+  function __construct(UserRepository $userRepo, UtilService $utilService)
   {
     $this->userRepo = $userRepo;
-    $this->utilSrv = $utilSrv;
+    $this->utilService = $utilService;
   }
 
   function createBulk(int $num)
@@ -24,14 +23,8 @@ class UserService
     $i = 1;
 
     while ($i <= $num) {
-      $user = new User();
-
-      $userName = $this->utilSrv->generateRandomString();
-
-      $user->setName($userName);
-      $user->setIdle(false);
-
-      $this->userRepo->persist($user);
+      $userName = $this->utilService->generateRandomString();
+      $this->userRepo->addUser($userName, false, false);
 
       $i++;
     }
