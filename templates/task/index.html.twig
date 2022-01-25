@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Task index{% endblock %}
+
+{% block body %}
+    <h1>Task index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Attachment</th>
+                <th>Assignee</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody class="table-striped">
+        {% for task in tasks %}
+            <tr>
+                <td>{{ task.id }}</td>
+                <td>{{ task.title }}</td>
+                <td>{{ task.description }}</td>
+                <td class="{{ task.attachmentFileName ? '' : 'text-danger' }}">
+                    {{ task.attachmentFileName ? 'YES' : 'NO' }}
+                    {% if task.attachmentFileName %}
+                        <br>
+                        <a href="{{ asset('uploads/' ~ task.attachmentFileName) }}">Download</a>
+                        <br>
+                        {{ include('task/_delete_attachment.html.twig') }}
+                    {% endif %}
+                </td>
+                <td class="{{ task.getUser() ? '' : 'text-danger' }}">{{ task.getUser() ?? 'NO ASSIGNEE' }}</td>
+                <td>
+                    <a href="{{ path('task_show', {'id': task.id}) }}">show</a>
+                    <a href="{{ path('task_edit', {'id': task.id}) }}">edit</a>
+                    {{ include('task/_delete_form.html.twig') }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6" class="text-center">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('task_new') }}">Create new</a>
+{% endblock %}
