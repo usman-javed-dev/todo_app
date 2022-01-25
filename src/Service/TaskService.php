@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+/**
+ * Task Service
+ */
 class TaskService
 {
   private $mediaSrv;
@@ -36,7 +39,7 @@ class TaskService
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-      $this->handleAttachment($form, $task);
+      $this->uploadAttachment($form, $task);
 
       $this->taskRepo->persist($task);
 
@@ -55,7 +58,7 @@ class TaskService
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-      $this->handleAttachment($form, $task);
+      $this->uploadAttachment($form, $task);
 
       $this->taskRepo->flush();
 
@@ -68,7 +71,7 @@ class TaskService
     ]];
   }
 
-  private function handleAttachment($form, Task $task)
+  private function uploadAttachment($form, Task $task)
   {
     /** @var UploadedFile $attachmentFile */
     $attachmentFile = $form->get('attachment')->getData();
@@ -85,6 +88,7 @@ class TaskService
 
     $this->taskRepo->remove($task);
   }
+
   public function deleteAttachment(Task $task)
   {
     // Remove file first

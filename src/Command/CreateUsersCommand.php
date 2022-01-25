@@ -9,6 +9,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+/**
+ * Command to create users in bulk
+ */
 class CreateUsersCommand extends Command
 {
     private $userSrv;
@@ -23,7 +26,7 @@ class CreateUsersCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('user_no', InputArgument::REQUIRED, 'Number of the users to add');
+        $this->addArgument('user_no', InputArgument::OPTIONAL, 'Number of the users to add', 1);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

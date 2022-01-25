@@ -6,6 +6,8 @@ use App\Repository\TaskRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Task Entity
+ * 
  * @ORM\Entity(repositoryClass=TaskRepository::class)
  */
 class Task extends AbstractEntity
@@ -29,11 +31,6 @@ class Task extends AbstractEntity
      * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $attachmentFileName;
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
 
     public function getTitle(): string
     {

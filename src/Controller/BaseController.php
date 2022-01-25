@@ -6,6 +6,9 @@ use App\Util\Enums;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Base Controller to remove boiler plate code
+ */
 class BaseController extends AbstractController
 {
   /**

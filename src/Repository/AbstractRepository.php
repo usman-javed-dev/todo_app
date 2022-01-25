@@ -4,6 +4,9 @@ namespace App\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * Abstract Repository
+ */
 abstract class AbstractRepository extends EntityRepository
 {
   public function persist($entity, $andFlush = true)

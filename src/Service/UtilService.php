@@ -2,6 +2,9 @@
 
 namespace App\Service;
 
+/**
+ * Common utilities services
+ */
 class UtilService
 {
   function generateRandomString($length = 10)

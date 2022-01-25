@@ -8,6 +8,9 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+/**
+ * Media Service for handling the uploading/deletion of files
+ */
 class MediaService
 {
   private $targetDirectory;

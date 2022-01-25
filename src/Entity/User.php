@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * User Entity
+ * 
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
 class User
@@ -39,12 +41,12 @@ class User
         $this->tasks = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -91,7 +93,7 @@ class User
         return $this->name;
     }
 
-    public function getIdle(): ?bool
+    public function isIdle(): bool
     {
         return $this->idle;
     }

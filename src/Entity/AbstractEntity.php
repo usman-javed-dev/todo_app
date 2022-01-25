@@ -12,4 +12,9 @@ abstract class AbstractEntity
    * @ORM\Column(type="integer", options={"unsigned"=true})
    */
   protected int $id;
+
+  public function getId(): int
+  {
+    return $this->id;
+  }
 }

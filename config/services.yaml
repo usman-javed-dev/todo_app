@@ -37,3 +37,11 @@ services:
     factory: ["@doctrine", "getRepository"]
     arguments:
       - "App:User"
+
+  ####
+  # Listeners
+  ####
+  App\EventListener\UserEventListener:
+    tags:
+      - name: "doctrine.event_listener"
+        event: "prePersist"
